@@ -1,10 +1,7 @@
 using System;
 using UnityEngine;
 
-public class FirstAidKit : MonoBehaviour
+public class FirstAidKit : TakedThing
 {
-    public void Destroy()
-    {
-        Destroy(gameObject);
-    }
+
 }

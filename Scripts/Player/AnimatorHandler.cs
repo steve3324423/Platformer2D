@@ -6,9 +6,9 @@ using UnityEngine;
 [RequireComponent(typeof(Health))]
 public class AnimatorHandler : MonoBehaviour
 {
-    private const string S_JumpAnimationName = "jump_hero";
-    private const string S_IdleAnimationName = "idle_hero";
-    private const string S_RunAnimationName = "run_hero";
+    private const string JumpAnimationName = "jump_hero";
+    private const string IdleAnimationName = "idle_hero";
+    private const string RunAnimationName = "run_hero";
 
     private Movement _player;
     private Animator _animator;
@@ -39,9 +39,9 @@ public class AnimatorHandler : MonoBehaviour
     private void OnRunning(float valueXPosition)
     {
         if (valueXPosition != 0 && _isJump == false)
-            _animator.Play(S_RunAnimationName);
+            _animator.Play(RunAnimationName);
         else if (_isJump == false)
-            _animator.Play(S_IdleAnimationName);
+            _animator.Play(IdleAnimationName);
     }
 
     private void OnMurderPlayer()
@@ -51,7 +51,7 @@ public class AnimatorHandler : MonoBehaviour
 
     private void OnJumped(bool isJump)
     {
-        _animator.Play(S_JumpAnimationName);
+        _animator.Play(JumpAnimationName);
         _isJump = isJump;
     }
 }

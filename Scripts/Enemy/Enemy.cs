@@ -4,41 +4,12 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private Transform[] _positions;
-    [SerializeField] private Health _player;
+    [SerializeField] private Transform _firstPosition;
+    [SerializeField] private Transform _secondPosition;
 
-    private Vector3 _firstPosition;
-    private Vector3 _secondPosition;
-    private Vector3 _target;
-    private WaitForSeconds _waitSeconds;
-    private float _timeForCoroutine = .5f;
-    private bool _isSeePlayer;
-    private float _damage = 10f;
+    protected Vector3 Target;
+    protected bool IsSeePlayer;
     private float _speed = 2f;
-
-    public event Action<float> AttackedPlayer;
-
-    private void Awake()
-    {
-        _waitSeconds = new WaitForSeconds(_timeForCoroutine);
-        _firstPosition  = _positions[0].position;
-        _secondPosition = _positions[1].position;
-    }
-
-    private void OnEnable()
-    {
-        _player.MurderPlayer += OnMurderPlayer;
-    }
-
-    private void OnDisable()
-    {
-        _player.MurderPlayer -= OnMurderPlayer;
-    }
-
-    private void Start()
-    {
-        StartCoroutine(ComparePlayerDistance());
-    }
 
     private void Update()
     {
@@ -48,50 +19,25 @@ public class Enemy : MonoBehaviour
     private void Moves()
     {
         SetTarget();
-        transform.position = Vector2.MoveTowards(transform.position, _target, _speed * Time.deltaTime);
-    }
-
-    private IEnumerator ComparePlayerDistance()
-    {
-        while(enabled)
-        {
-            Vector2 offsetPlayerPosition = _player.transform.position - transform.position;
-            float minDistancePlayerForAttack = 1f;
-            float minDistancePlayer = 3f;
-
-            if (offsetPlayerPosition.sqrMagnitude < minDistancePlayerForAttack * minDistancePlayerForAttack)
-                AttackedPlayer?.Invoke(_damage);
-
-            if (offsetPlayerPosition.sqrMagnitude < minDistancePlayer * minDistancePlayer)
-            {
-                _target = _player.transform.position;
-                _isSeePlayer = true;
-            }
-            else
-            {
-                _isSeePlayer = false;
-            }
-
-            yield return _waitSeconds;
-        }
+        transform.position = Vector2.MoveTowards(transform.position, Target, _speed * Time.deltaTime);
     }
 
     private void SetTarget()
     {
-        Vector2 offsetPositionOne = _firstPosition - transform.position;
-        Vector2 offsetPositionTwo = _secondPosition - transform.position;
+        Vector2 offsetPositionOne = _firstPosition.position - transform.position;
+        Vector2 offsetPositionTwo = _secondPosition.position - transform.position;
         float minDistance = .1f;
 
-        if (_isSeePlayer == false && _target != _firstPosition && _target != _secondPosition)
-            _target = _firstPosition;
-        else if (offsetPositionOne.sqrMagnitude < minDistance * minDistance && offsetPositionTwo.sqrMagnitude > minDistance * minDistance)
-            _target = _secondPosition;
-        else if (offsetPositionTwo.sqrMagnitude < minDistance * minDistance && offsetPositionOne.sqrMagnitude > minDistance * minDistance)
-            _target = _firstPosition;
+        if (IsSeePlayer == false && Target != _firstPosition.position && Target != _secondPosition.position)
+            Target = _firstPosition.position;
+        else if (CheckDistanceForTarget(offsetPositionOne,offsetPositionTwo,minDistance) == true)
+            Target = _secondPosition.position;
+        else if (CheckDistanceForTarget(offsetPositionTwo, offsetPositionOne, minDistance) == true)
+            Target = _firstPosition.position;
     }
 
-    private void OnMurderPlayer()
+    private bool CheckDistanceForTarget(Vector2 positionOne,Vector2 positionTwo,float minDistance)
     {
-        StopCoroutine(ComparePlayerDistance());
+        return positionOne.sqrMagnitude < minDistance * minDistance && positionTwo.sqrMagnitude > minDistance * minDistance;
     }
 }

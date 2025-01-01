@@ -1,10 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Coin : MonoBehaviour
+public class Coin : TakedThing
 {
-    public void Destroy()
-    {
-        Destroy(gameObject);
-    }
+
 }

@@ -3,37 +3,12 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] private Enemy[] _enemies;
-
-    private PlayerTakesHandler _playerTakesHandler;
-
     public float HealthValue { get; private set; } = 100f;
 
     public event Action MurderPlayer;
     public event Action TakeDamage;
 
-    private void Awake()
-    {
-        _playerTakesHandler = GetComponent<PlayerTakesHandler>();
-    }
-
-    private void OnEnable()
-    {
-        _playerTakesHandler.TakedFirstAidKit += OnTakedFirstAidKit;
-
-        foreach (Enemy enemy in _enemies)
-            enemy.AttackedPlayer += OnAttackedPlayer;
-    }
-
-    private void OnDisable()
-    {
-        _playerTakesHandler.TakedFirstAidKit -= OnTakedFirstAidKit;
-
-        foreach (Enemy enemy in _enemies)
-            enemy.AttackedPlayer -= OnAttackedPlayer;
-    }
-
-    private void OnAttackedPlayer(float damage)
+    public void TakedDamage(float damage)
     {
         HealthValue -= damage;
         TakeDamage?.Invoke();
@@ -44,7 +19,7 @@ public class Health : MonoBehaviour
         }
     }
 
-    private void OnTakedFirstAidKit(float valueIncrease)
+    public void TakeFirstAidKit(float valueIncrease)
     {
         HealthValue += valueIncrease;
     }
